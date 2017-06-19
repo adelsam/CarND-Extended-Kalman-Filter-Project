@@ -104,7 +104,7 @@ void FusionEKF::ProcessMeasurement(const MeasurementPackage &measurement_pack) {
     // done initializing, no need to predict or update
     is_initialized_ = true;
 
-//      cout << "set ts: " << measurement_pack.timestamp_ << endl;
+    // cout << "set ts: " << measurement_pack.timestamp_ << endl;
     previous_timestamp_ = measurement_pack.timestamp_;
     return;
   }

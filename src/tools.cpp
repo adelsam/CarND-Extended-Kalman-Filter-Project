@@ -73,6 +73,8 @@ MatrixXd Tools::CalculateJacobian(const VectorXd& x_state) {
 
         Hj(2,2) = px/pow(divisor,.5);
         Hj(2,3) = py/pow(divisor,.5);
+    } else {
+        cout << "ERROR DIV zero in jacobian. " << endl;
     }
 
     //check division by zero
