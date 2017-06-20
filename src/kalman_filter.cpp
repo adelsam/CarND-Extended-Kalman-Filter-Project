@@ -2,6 +2,8 @@
 #include <iostream>
 #include <math.h>
 
+#define PI 3.14159265
+
 using namespace std;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
@@ -61,13 +63,21 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   double rho = pow(pow(x_[0], 2) + pow(x_[1], 2), .5);
   x_polar << rho,
           atan2(x_[1], x_[0]),
-          (x_[0]*x_[2] + x_[1]*x_[3])/rho;
+          (x_[0] * x_[2] + x_[1] * x_[3]) / rho;
 
   cout << "x_polar: " << x_polar << endl;
 
   VectorXd z_pred = x_polar; //polar
   VectorXd y = z - z_pred;
   cout << "y: " << y << endl;
+  while (y[1] < -PI) {
+    y[1] += 2 * PI;
+    cout << "Adding Y" << endl;
+  }
+  while (y[1] > PI) {
+    y[1] -= 2 * PI;
+    cout << "Subtracting Y" << endl;
+  }
 
 
   MatrixXd Ht = H_.transpose();
@@ -76,6 +86,14 @@ void KalmanFilter::UpdateEKF(const VectorXd &z) {
   MatrixXd PHt = P_ * Ht;
   MatrixXd K = PHt * Si;
 
+
+  VectorXd newEstimate = x_ + (K * y);
+  if (isnan(newEstimate[0])) {
+    cout << "Update would create nan." << endl;
+    cout << "H_: " << H_ << endl;
+    cout << "S: " << S << endl;
+    cout << "K: " << K << endl;
+  }
   //new estimate
   x_ = x_ + (K * y);
   cout << "x_: " << x_ << endl;
